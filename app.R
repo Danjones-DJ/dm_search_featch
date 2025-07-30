@@ -1,4 +1,3 @@
-
 library(shiny)
 library(tidyverse)
 library(PostcodesioR)
@@ -1787,8 +1786,8 @@ ui <- fluidPage(
           )
       ),
       
-      h2(class = "section-header", "Degree Types"),
-      p(class = "section-subtitle", "Filter by specific qualification types"),
+      h2(class = "section-header", "Degree Types (Optional)"),
+      p(class = "section-subtitle", "Use this to filter and explore by specific degree types - we recommend selecting 1-2 at a time without 'interest' filters you haven't heard of"),
       
       div(class = "card-container",
           div(class = "degree-grid",
@@ -1852,14 +1851,14 @@ ui <- fluidPage(
           div(style = "display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;",
               # Filter Tabs
               div(class = "filter-tabs",
-                  tags$button("All Suitable Courses", class = "filter-tab active", id = "tab_all", 
-                              onclick = "switchTab('all')"),
-                  tags$button("Exact Grade Matches", class = "filter-tab", id = "tab_exact", 
+                  tags$button("Exact Grade Matches", class = "filter-tab active", id = "tab_exact", 
                               onclick = "switchTab('exact')"),
                   tags$button("Overqualified Matches", class = "filter-tab", id = "tab_over", 
                               onclick = "switchTab('over')"),
                   tags$button("Underqualified Matches", class = "filter-tab", id = "tab_under", 
-                              onclick = "switchTab('under')")
+                              onclick = "switchTab('under')"),
+                  tags$button("All Suitable Courses", class = "filter-tab", id = "tab_all", 
+                              onclick = "switchTab('all')")
               ),
               # Filter Controls
               div(class = "filter-controls",
@@ -1884,6 +1883,11 @@ ui <- fluidPage(
       # Course Results
       h2(class = "section-header", "Your Course Matches"),
       p(class = "section-subtitle", "Courses tailored to your academic profile, interests, and location"),
+      
+      # Course count display
+      div(style = "margin: 16px 0; padding: 12px 20px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; border-left: 4px solid #1DB954;",
+          textOutput("course_count_display")
+      ),
       
       div(class = "courses-grid",
           uiOutput("course_cards")
@@ -2735,7 +2739,7 @@ server <- function(input, output, session) {
       filtered_data <- filtered_courses()
     }
     
-    current_tab <- if(is.null(input$current_tab)) "all" else input$current_tab
+    current_tab <- if(is.null(input$current_tab)) "exact" else input$current_tab
     layout <- input$qual_layout
     if (is.null(layout)) layout <- "a_levels"
     
@@ -2787,6 +2791,28 @@ server <- function(input, output, session) {
     }
     
     return(head(filtered_data, num_to_show))
+  })
+  
+  # Course count display
+  output$course_count_display <- renderText({
+    courses_to_show <- displayed_courses()
+    
+    if(nrow(courses_to_show) == 0) {
+      return("No courses found matching your criteria")
+    }
+    
+    # Calculate total courses shown
+    total_courses <- nrow(courses_to_show)
+    
+    # Calculate unique courses by title
+    unique_courses <- length(unique(courses_to_show$title))
+    
+    # Format the display text
+    if(total_courses == unique_courses) {
+      return(paste0(total_courses, " courses found"))
+    } else {
+      return(paste0(total_courses, " courses found (", unique_courses, " unique)"))
+    }
   })
   
   output$course_cards <- renderUI({
