@@ -1787,7 +1787,7 @@ ui <- fluidPage(
       ),
       
       h2(class = "section-header", "Degree Types (Optional)"),
-      p(class = "section-subtitle", "Use this to filter and explore by specific degree types - we recommend selecting 1-2 at a time without 'interest' filters you haven't heard of"),
+      p(class = "section-subtitle", "Use this to filter and explore by specific degree types"),
       
       div(class = "card-container",
           div(class = "degree-grid",
