@@ -8,7 +8,7 @@ library(ggplot2)
 conflict_prefer("span", "shiny")
 
 # Load the new dataset
-degree_data <- read.csv("https://raw.githubusercontent.com/Danjones-DJ/Degree-Matchmaker_DJ/refs/heads/main/gt_warwick.csv", 
+degree_data <- read.csv("https://raw.githubusercontent.com/Danjones-DJ/Degree-Matchmaker_DJ/refs/heads/main/gt_4.csv", 
                         stringsAsFactors = FALSE)
 
 # Clean and prepare the data - UPDATE COLUMN NAMES
